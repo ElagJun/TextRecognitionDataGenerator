@@ -93,6 +93,7 @@ class FakeTextDataGenerator(object):
         else:
             print('{} is not a valid name format. Using default.'.format(name_format))
             image_name = '{}_{}.{}'.format(text, str(index), extension)
+			
         image_name=str(uuid.uuid1())+extension
         filename = os.path.join(out_dir,(flag+'_cn_data.txt'))
         with open(filename, 'a',encoding='utf-8') as f:

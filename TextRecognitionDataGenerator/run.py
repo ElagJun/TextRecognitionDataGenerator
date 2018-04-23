@@ -184,23 +184,7 @@ def parse_arguments():
     )
 
     return parser.parse_args()
-def simplechinese(count):
-    strings = []
-    alphabet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    cn=""
-    with open(os.path.join('dicts','dic.txt'), 'r', encoding='utf-8') as dict_file:
-        for line in dict_file:
-            (key, value) = line.strip().split('\t')
-            cn += value
-        while len(strings) < count:
 
-            current_string = random.sample(cn,random.randint(3,7))+random.sample(list(alphabet),random.randint(5,20))
-            current_string = "".join(random.sample(current_string,len(current_string)))
-
-            strings.append(current_string[:-1])
-        print(strings)
-
-    return strings
 
 def load_dict(lang):
     """
@@ -284,6 +268,24 @@ def create_strings_from_wikipedia(minimum_length, count, lang):
 
     return sentences[0:count]
 
+def simplechinese(count):
+    strings = []
+    alphabet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    cn=""
+    with open(os.path.join('dicts','dic.txt'), 'r', encoding='utf-8') as dict_file:
+        for line in dict_file:
+            (key, value) = line.strip().split('\t')
+            cn += value
+        while len(strings) < count:
+
+            current_string = random.sample(cn,random.randint(3,7))+random.sample(list(alphabet),random.randint(5,20))
+            current_string = "".join(random.sample(current_string,len(current_string)))
+
+            strings.append(current_string[:-1])
+        print(strings)
+
+    return strings
+	
 def main():
     """
         Description: Main function
