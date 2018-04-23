@@ -1,7 +1,7 @@
 import os
 import cv2
 import random
-
+import uuid
 from PIL import Image, ImageFilter
 
 from computer_text_generator import ComputerTextGenerator
@@ -14,7 +14,7 @@ from distorsion_generator import DistorsionGenerator
 
 class FakeTextDataGenerator(object):
     @classmethod
-    def generate(cls, index, text, font, out_dir, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1):
+    def generate(cls, index, text, font, out_dir, flag, height, extension, skewing_angle, random_skew, blur, random_blur, background_type, distorsion_type, distorsion_orientation, is_handwritten, name_format, text_color=-1):
         image = None
 
         ##########################
@@ -93,6 +93,9 @@ class FakeTextDataGenerator(object):
         else:
             print('{} is not a valid name format. Using default.'.format(name_format))
             image_name = '{}_{}.{}'.format(text, str(index), extension)
-
+        image_name=str(uuid.uuid1())+extension
+        filename = os.path.join(out_dir,(flag+'_cn_data.txt'))
+        with open(filename, 'a',encoding='utf-8') as f:
+            f.write(os.path.join(image_name+"\t"+text+"\n"))
         # Save the image
-        final_image.convert('RGB').save(os.path.join(out_dir, image_name))
+        final_image.convert('RGB').save(os.path.join(out_dir, flag, image_name))

@@ -16,11 +16,20 @@ def parse_arguments():
 
     parser = argparse.ArgumentParser(description='Generate synthetic text data for text recognition.')
     parser.add_argument(
-        "output_dir",
+        "-o",
+        "--output_dir",
         type=str,
         nargs="?",
         help="The output directory",
-        default="out/",
+        default="out",
+    )
+    parser.add_argument(
+        "-flag",
+        "--flag",
+        type=str,
+        nargs="?",
+        help="train or test",
+        default="train",
     )
     parser.add_argument(
         "-i",
@@ -36,7 +45,7 @@ def parse_arguments():
         type=str,
         nargs="?",
         help="The language to use, should be fr (Français), en (English), es (Español), or de (Deutsch).",
-        default="en"
+        default="cn"
     )
     parser.add_argument(
         "-c",
@@ -44,7 +53,7 @@ def parse_arguments():
         type=int,
         nargs="?",
         help="The number of images to be created.",
-        default=1000
+        default=100
     )
     parser.add_argument(
         "-n",
@@ -97,7 +106,7 @@ def parse_arguments():
         type=str,
         nargs="?",
         help="Define the extension to save the image with",
-        default="jpg",
+        default=".jpg",
     )
     parser.add_argument(
         "-k",
@@ -142,7 +151,7 @@ def parse_arguments():
         type=int,
         nargs="?",
         help="Define what kind of background to use. 0: Gaussian Noise, 1: Plain white, 2: Quasicrystal, 3: Pictures",
-        default=0,
+        default=1,
     )
     parser.add_argument(
         "-hw",
@@ -175,6 +184,23 @@ def parse_arguments():
     )
 
     return parser.parse_args()
+def simplechinese(count):
+    strings = []
+    alphabet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    cn=""
+    with open(os.path.join('dicts','dic.txt'), 'r', encoding='utf-8') as dict_file:
+        for line in dict_file:
+            (key, value) = line.strip().split('\t')
+            cn += value
+        while len(strings) < count:
+
+            current_string = random.sample(cn,random.randint(3,7))+random.sample(list(alphabet),random.randint(5,20))
+            current_string = "".join(random.sample(current_string,len(current_string)))
+
+            strings.append(current_string[:-1])
+        print(strings)
+
+    return strings
 
 def load_dict(lang):
     """
@@ -182,7 +208,7 @@ def load_dict(lang):
     """
 
     lang_dict = []
-    with open(os.path.join('dicts', lang + '.txt'), 'r') as d:
+    with open(os.path.join('dicts', lang + '.txt'), 'r', encoding='utf-8') as d:
         lang_dict = d.readlines()
     return lang_dict
 
@@ -191,7 +217,7 @@ def load_fonts():
         Load all fonts in the fonts directory
     """
 
-    return [os.path.join('fonts', font) for font in os.listdir('fonts')]
+    return [os.path.join('fonts1', font) for font in os.listdir('fonts1')]
 
 def create_strings_from_file(filename, count):
     """
@@ -268,7 +294,7 @@ def main():
 
     # Create the directory if it does not exist.
     try:
-        os.makedirs(args.output_dir)
+        os.makedirs(os.path.join(args.output_dir, args.flag))
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
@@ -287,7 +313,9 @@ def main():
     elif args.input_file != '':
         strings = create_strings_from_file(args.input_file, args.count)
     else:
-        strings = create_strings_from_dict(args.length, args.random, args.count, lang_dict)
+        #strings = create_strings_from_dict(args.length, args.random, args.count, lang_dict)
+        strings = simplechinese(args.count)
+
 
 
     string_count = len(strings)
@@ -300,6 +328,7 @@ def main():
             strings,
             [fonts[random.randrange(0, len(fonts))] for _ in range(0, string_count)],
             [args.output_dir] * string_count,
+            [args.flag] * string_count,
             [args.format] * string_count,
             [args.extension] * string_count,
             [args.skew_angle] * string_count,
